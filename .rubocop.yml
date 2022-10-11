@@ -1,0 +1,26 @@
+inherit_gem:
+  rubocop-rails_config:
+    - config/rails.yml
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# rubocop-rails_config defines EmptyLinesAroundAccessModifier to only_before.  Override it here
+Layout/EmptyLinesAroundAccessModifier:
+  EnforcedStyle: around
+
+# rubocop-rails_config defines IndentationConsistency to indented_internal_methods.  Override it here
+Layout/IndentationConsistency:
+  EnforcedStyle: normal
+
+AllCops:
+  TargetRubyVersion: 2.7
+  Exclude:
+    - 'db/**/*'
+    - 'bin/*'
+    - 'config/application.rb'
+    - 'config/environments/*'
+    - 'config/puma.rb'

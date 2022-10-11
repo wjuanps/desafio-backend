@@ -1,0 +1,53 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:11.9
+    hostname: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "54320:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    hostname: redis
+    image: redis:5-alpine
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6381:6379"
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+  web:
+    build:
+      context: .
+    command: bundle exec rails s -b '0.0.0.0'
+    volumes:
+      - .:/app:delegated
+      - /app/tmp
+    ports:
+      - "30100:3000"
+    depends_on:
+      - postgres
+      - redis
+    tty: true
+    stdin_open: true
+  test:
+    build:
+      context: .
+      args:
+        - "RAILS_ENV=test"
+    command: bundle exec rspec spec
+    volumes:
+      - .:/app:delegated
+    depends_on:
+      - postgres
+      - redis
