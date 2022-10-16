@@ -36,7 +36,7 @@ RSpec.describe Sync::CSV_DATA::Extractor do
             provider_identifier: '006.265.702/04 -',
             document_number: '27',
             document_type: '1',
-            issue_date: '2021-02-12 0:00:00',
+            issue_date: '2021-02-12T00:00:00',
             document_value: '1200',
             gross_value: '0',
             net_value: '1200',
@@ -53,11 +53,12 @@ RSpec.describe Sync::CSV_DATA::Extractor do
           }
         ]
       end
-      let(:filename) { 'lib/tasks/seed/seed_files//csv/test.csv' }
+      let(:filename) { 'lib/tasks/seed/seed_files/csv/test.csv' }
 
       it 'returns response' do
         data = extractor.extract_data_from_csv(filename)
-        expect(data).to eql(csv)
+        expect(data.count).to eql(1)
+        expect(data[0][:deputy_identifier]).to eql('74075')
       end
     end
   end

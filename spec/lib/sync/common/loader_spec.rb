@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'sync/common/loader_error'
 require 'sync/common/loader'
 
 RSpec.describe Sync::Common::Loader do
@@ -9,11 +10,13 @@ RSpec.describe Sync::Common::Loader do
       let(:deputies) { [] }
 
       it 'should raise an loading error' do
-        expect { loader.load_deputies(deputies) }.to raise_error
+        expect { 
+          loader.load_deputies(deputies) 
+        }.to raise_error(Sync::Common::LoaderError, 'Array of deputies can\'t be empty')
       end
     end
 
-    context 'with invalid value' do
+    context 'with valid value' do
       let(:deputies) do
         [{
           deputy_identifier: 74075,

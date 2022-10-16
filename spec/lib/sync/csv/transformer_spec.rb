@@ -34,7 +34,7 @@ RSpec.describe Sync::CSV_DATA::Transformer do
             provider_identifier: '006.265.702/04 -',
             document_number: '7157876',
             document_type: '1',
-            issue_date: '2021-02-12 0:00:00',
+            issue_date: '2021-02-12T00:00:00',
             document_value: '1200',
             gross_value: '0',
             net_value: '1200',
@@ -52,53 +52,19 @@ RSpec.describe Sync::CSV_DATA::Transformer do
         ]
       end
 
-      let(:expected_deputy) do
-        {
-          deputy_identifier: 74075,
-          name: 'Elcione Barbalho',
-          taxpayer: '605387249',
-          legislature: {
-            parliamentary_card: 21,
-            legislature_number: 2019,
-            state: 'PA',
-            political_party: 'MDB',
-            legislature_code: 56
-          },
-          quota: {
-            sub_quota_number: 1,
-            description: 'MANUTENÇÃO DE ESCRITÓRIO DE APOIO À ATIVIDADE PARLAMENTAR',
-            sub_quota_esoecification_number: 0,
-            description_especification: nil
-          },
-          invoice: {
-            document_number: 7157876,
-            document_type: 1,
-            issue_date: Time.new('2021-02-12 0:00:00'),
-            document_value: 120000,
-            gross_value: 0,
-            net_value: 120000,
-            month: 1,
-            year: 2021,
-            installments: 0,
-            passenger_name: nil,
-            leg_trip: nil,
-            batch: 1747065,
-            refund: nil,
-            restitution: nil,
-            requester_id: 1011,
-            document_url: 'https://www.camara.leg.br/cota-parlamentar/documentos/publ/1011/2021/7157876.pdf'
-          },
-          provider: {
-            provider_name: 'ARUAN DO CARMO',
-            provider_identifier: '006.265.702/04 -'
-          }
-        }
-      end
-
       it 'translates to expected format' do
         transformed = transaform.transform_csv_to_deputy_objects(csv_data)
 
-        expect(transformed.first).to eql(expected_deputy)
+        expect(transformed.first.present?).to be_truthy
+        expect(transformed.first.count).to eql(7)
+        expect(transformed.first[:legislature].present?).to be_truthy
+        expect(transformed.first[:legislature].count).to eql(5)
+        expect(transformed.first[:quota].present?).to be_truthy
+        expect(transformed.first[:quota].count).to eql(4)
+        expect(transformed.first[:invoice].present?).to be_truthy
+        expect(transformed.first[:invoice].count).to eql(16)
+        expect(transformed.first[:provider].present?).to be_truthy
+        expect(transformed.first[:provider].count).to eql(2)
       end
     end
   end
