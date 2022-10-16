@@ -1,0 +1,68 @@
+<p id="notice"><%= notice %></p>
+
+<div class="row">
+  <form id="searchForm" class="col s12" action="<%= root_path %>" method="GET">
+    <div class="row">
+      <div class="input-field col s9 right">
+        <i class="material-icons prefix">search</i>
+        <input type="text" name="deputy_name" id="deputy_name" class="materialize-input" value="<%= @deputy_name %>" />
+        <label for="deputy_name">Nome do deputado</label>
+      </div>
+      <div class="input-field col s3">
+        <select id="year" name="year">
+          <option <%= 'selected' if @year == '2021' %> value="2021">2021</option>
+          <option <%= 'selected' if @year == '2020' %> value="2020">2020</option>
+          <option <%= 'selected' if @year == '2022' %> value="2022">2022</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+<% if @deputies.count.positive? %>
+  <% @deputies.each do |deputy| %>
+    <div class="col s12 m6 l6">
+      <div class="card">
+        <div class="card-image">
+          <img src="<%= deputy.photo_url %>">
+        </div>
+        <div class="card-content">
+          <span class="card-title"><%= "#{deputy.name}, #{deputy.legislatures.last.political_party}" %></span>
+            <div class="collection">
+              <a href="#!" class="collection-item"><span class="badge"><%= @util.convert_cents_to_real(deputy.invoices.total_expenses) %></span>Gastos totais</a>
+              <a href="#!" class="collection-item"><span class="badge"><%= @util.convert_cents_to_real(deputy.invoices.maximum_expense) %></span>Maior gasto</a>
+            </div>
+        </div>
+        <div class="card-action">
+          <%= link_to "Detalhar gastos", deputies_show_path(id: deputy.id, name: deputy.get_name), title: "Detalhar deputado" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="center-align">
+    <h5>Não foram encontrados deputados para sua pesquisa</h5><br />
+    <%= link_to "Resetar filtros", root_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
+    <%= link_to "Cadastrar novos deputados", deputies_new_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
+  </div>
+<% end %>
+</div>
+
+<div class="center-align">
+  <%= paginate @deputies %>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let elems = document.querySelectorAll('select');
+    let instances = M.FormSelect.init(elems);
+
+    document.getElementById('year').addEventListener('change', handleSearch)
+    document.getElementById('deputy_name').addEventListener('keyup', handleSearch)
+  })
+
+  const handleSearch = event => {
+    if (event.type === 'change' || event.which === 13) {
+      event.target.form.submit()
+    }
+  }
+</script>

@@ -1,15 +1,82 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>DesafioBackend</title>
+    <title>Desafio Backend</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <style>
+      .content {
+        margin-bottom: 10vh;
+      }
+    </style>
   </head>
 
   <body>
-    <%= yield %>
+    <% if notice.present? %>
+      <%= content_tag :div, id: "notice", data: { temp: notice }, class: 'hiden' do %><% end %>
+    <% end %>
+
+    <main class="content">
+      <nav>
+        <div class="container">
+          <div class="nav-wrapper">
+            <%= link_to 'Ruan Soares', root_path, class: 'brand-logo' %>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <%= link_to 'Cadastrar deputados', deputies_new_path %>
+            </ul>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <%= link_to 'Gráficos', invoices_charts_path %>
+            </ul>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+              <%= link_to 'Início', deputies_path %>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container">
+        <%= yield %>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col l8 s12 left-align">
+            <h5 class="white-text">Sobre mim</h5>
+            <p class="grey-text text-lighten-4">Tenho pós graduação em Business intelligence, big data e analytics - ciência de dados. Casado, pai de duas crianças lindas e completamente viciado e apaixonado por códigos. Comecei a desenvolver sites e sistemas em 2012 e não consegui mais parar.</p>
+            <p class="grey-text text-lighten-4">Desenvolvo projetos voltados para o posicionamento e fortalecimento do cliente na web, através da análise concorrencial e das melhores estratégias, utilizando sempre tecnologias avançadas e ideias inovadoras.</p>
+            <p class="grey-text text-lighten-4">Acredito que a principal função do software é facilitar a vida de quem o usa, por isso me dedico a compreensão total da necessidade que o deu origem, e tento tornar a interpretação das informações que o usuário precisa o mais simples e natural possível.</p>
+          </div>
+          <div class="col l4 s12 right-align" >
+            <h5 class="white-text">Links</h5>
+            <ul>
+              <li><a class="grey-text text-lighten-3" target="_blank" href="https://www.linkedin.com/in/ruan-soares/">Linkedin</a></li>
+              <li><a class="grey-text text-lighten-3" target="_blank" href="https://github.com/wjuanps">Github</a></li>
+              <li><a class="grey-text text-lighten-3" target="_blank" href="https://www.instagram.com/w_juan_/">Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container left-align">
+          © 2022 Ruan Soares
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", event => {
+        let notice = document.getElementById('notice')
+        if (!!notice) {
+          M.toast({ html: notice.dataset.temp, duration: 3000 });
+        }
+      })
+    </script>
   </body>
 </html>

@@ -1,0 +1,82 @@
+
+<style>
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: red;
+  color: white;
+  text-align: center;
+}
+</style>
+
+<%= form_for(@deputy, url: deputies_create_path(@deputy), html: { method: :post, multipart: true, id: "createDeputiesForm" }) do |f| %>
+  <div class="file-field input-field" id="inputField">
+    <div class="btn">
+      <span>File</span>
+      <input id="file" name="deputy[file]" type="file" class="" />
+    </div>
+    <div class="file-path-wrapper">
+      <input id="filePathWrapper" class="file-path" type="text" />
+    </div>
+  </div>
+
+  <div id="errorMessage" class="hide">
+   <p class="red-text valign-wrapper"><i class="material-icons small">error_outline</i>&nbsp;&nbsp;Arquivo inválido. Somente arquivos .csv são permitidos.</p>
+  </div>
+
+  <div id="loadingPanel" class="hide">
+    <h4>Carregando documento... Por favor, aguarde!</h4>
+    <div class="progress">
+      <div class="indeterminate"></div>
+    </div>
+  </div>
+
+  <br />
+  <button type="button" id="saveDeputy" class="pink btn btn-full waves-effect waves-light disabled">Carregar documento <i class="material-icons right">send</i></button>
+<% end %>
+
+<script>
+document.addEventListener("DOMContentLoaded", event => {
+  document.getElementById("file").addEventListener("change", handleFileChanged)
+  document.getElementById("saveDeputy").addEventListener("click", handleSubmitDocument)
+})
+
+const inputField = document.getElementById("inputField")
+const errorMessage = document.getElementById("errorMessage")
+const loadingPanel = document.getElementById("loadingPanel")
+const buttonSubmit = document.getElementById("saveDeputy")
+const filePathWrapper = document.getElementById("filePathWrapper")
+
+const handleSubmitDocument = () => {
+  let createDeputiesForm = document.getElementById('createDeputiesForm')
+
+  inputField.classList.add('hide')
+  buttonSubmit.classList.add('disabled')
+  loadingPanel.classList.remove('hide')
+  errorMessage.classList.add('hide')
+
+  createDeputiesForm.submit()
+}
+
+const handleFileChanged = envent => {
+  let fileExtension = event.target.value.split('.').slice(-1)[0]
+
+  buttonSubmit.classList.add('disabled')
+  loadingPanel.classList.add('hide')
+  errorMessage.classList.add('hide')
+
+
+  if (fileExtension !== 'csv') {
+    errorMessage.classList.remove('hide')
+    buttonSubmit.classList.add('disabled')
+    filePathWrapper.classList.add('invalid')
+  } else {
+    errorMessage.classList.add('hide')
+    buttonSubmit.classList.remove('disabled')
+    filePathWrapper.classList.remove('invalid')
+    filePathWrapper.classList.add('valid')
+  }
+}
+</script>

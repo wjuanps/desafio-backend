@@ -1,0 +1,94 @@
+<p id="notice"><%= notice %></p>
+
+<div class="row">
+  <div class="col s12 m12">
+    <h4 class="header"><%= @deputy.name %></h4>
+    <div class="row card-panel white lighten-5 z-depth-1">
+      <div class="col s12 m3">
+          <img class="responsive-img" style="height: 25vh" src="<%= @deputy.photo_url %>">
+      </div>
+      <div class="col s12 m9">
+        <div class="row">
+          <div class="col s6 m4">
+            <p><strong>CPF:</strong></p>
+            <p><strong>Identificador:</strong></p>
+            <p><strong>Carteira parlamentar:</strong></p>
+            <p><strong>Estado:</strong></p>
+            <p><strong>Partido:</strong></p>
+            <p><strong>Legislatura:</strong></p>
+          </div>
+          <div class="col s6 m8">
+            <p><%= "#{@deputy.taxpayer[0,3]}.#{@deputy.taxpayer[3,3]}.#{@deputy.taxpayer[6,3]}-#{@deputy.taxpayer[9,2]}" %></p>
+            <p><%= @deputy.deputy_identifier %></p>
+            <p><%= @deputy.legislatures.last.parliamentary_card %></p>
+            <p><%= @deputy.legislatures.last.state %></p>
+            <p><%= @deputy.legislatures.last.political_party %></p>
+            <p><%= @deputy.legislatures.last.legislature_code %></p>
+          </div>  
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col s12 m12">
+    <h5>Despesas</h5>
+    <div class="row">
+      <div class="col s12 m12" style="margin-bottom: 3vh">
+        <table class="striped highlight responsive-table">
+          <thead>
+            <tr>
+                <th>Gastos totais</th>
+                <th>Maior despesa</th>
+                <th></th>
+            </tr>
+
+            <tbody>
+              <tr>
+                <td><%= @total_expenses %></td>
+                <td><%= @util.convert_cents_to_real(@max_expense.net_value) %> no estabelecimento <%= @max_expense.provider.name %> em <%= @max_expense.issue_date.strftime("%d/%m/%Y") %></td>
+                <td><a href="<%= invoices_charts_path(legislatureCode: @current_legislature.legislature_code, politicalParty: @current_legislature.political_party, state: @current_legislature.state, deputyTaxpayer: @deputy.taxpayer) %>" class="btn-small waves-effect waves-light red tooltipped" data-position="bottom" data-tooltip="Visualizar gráficos"><i class="material-icons">timeline</i></a><td>
+              </tr>
+            </tbody>
+          </thead>
+        </table>
+      </div>
+
+      <div class="col s12 m12">
+        <table class="striped highlight responsive-table">
+          <thead>
+            <tr>
+                <th>Número do documento</th>
+                <th>Data de emissão</th>
+                <th>Estabelecimento</th>
+                <th>Valor</th>
+                <th>Link para nota</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @invoices.each do |invoice| %>
+              <tr>
+                <td><%= invoice.document_number %></td>
+                <td><%= invoice.issue_date.strftime("%d/%m/%Y") %></td>
+                <td><%= invoice.provider.name %></td>
+                <td><%= @util.convert_cents_to_real(invoice.net_value) %></td>
+                <td class="center-align"><a href="<%= invoice.document_url %>" target="_blank"><i class="material-icons prefix">insert_link</i></a></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <div class="center-align">
+          <%= paginate @invoices %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.tooltipped');
+    var instances = M.Tooltip.init(elems);
+  });
+</script>
