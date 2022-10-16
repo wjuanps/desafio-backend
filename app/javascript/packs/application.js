@@ -3,6 +3,14 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
+import '../stylesheets/application'
+import 'materialize-css/dist/js/materialize'
+import 'chartkick/dist/js/chartkick.js'
+import 'chartkick/chart.js/chart.esm'
+import 'chart.js/dist/chart.mjs'
+require("chartkick")
+require("chart.js")
+
 require("@rails/ujs").start()
 require("turbolinks").start()
 require("@rails/activestorage").start()
