@@ -10,7 +10,7 @@
 
 The configuration of this project is correct assuming you will run everything using Docker.  If you want to run not within Docker see [Run Service Directly](#run-service-directly).
 
-### Confirm that serivces are running
+### Confirm that services are running
 
 ```
 $ docker-compose ps
@@ -46,11 +46,10 @@ It's necessary to run the seed command in order to create the user necessary for
 ### Confirm Rails landing page
 
 - Go to http://localhost:3000/ (Make sure that the port matchs the port mapped in the "docker-compose ps" output from the previous step.)
-- Confirm that you see the Rails "Yay! You’re on Rails!" landing page.
 
 ## Run Service Directly
 
-If you want to run the pricing service directly on your computer and not within a Docker container you'll need to do the following.  Note that it's still convenient to run postgres and redis within docker.
+If you want to run the backend-challenge service directly on your computer and not within a Docker container you'll need to do the following.  Note that it's still convenient to run postgres and redis within docker.
 
 - Install necessary prerequisites - PostgreSQL client library
   ```shell script
@@ -92,6 +91,7 @@ docker-compose run -e "RAILS_ENV=test" web bundle exec rake db:migrate
 
 # run tests
 docker-compose run -e "RAILS_ENV=test" web rspec
+docker-compose exec web bundle exec rspec
 
 # run schema:load
 docker-compose exec web bundle exec rake db:schema:load
@@ -102,15 +102,15 @@ docker-compose exec web bundle exec rake db:seed
 
 ## Load CSV files
 
-You can load the CSV files whether by accessing the '/deputies/new' URL and selecting the desired file or by running the task sync:csv
+You can load the CSV files whether by accessing the [Upload csv page]('http://localhost:3000/deputies/new') page and selecting the desired file or by running the task sync:csv
 
 ```
 docker-compose exec web bundle exec rake sync:csv
 ```
 
-If you want to upload the file through the system, make sure you have followed the instructions above about creating the default user, and that you are logged in 
+If you want to upload the file within the system, make sure you have followed [these instructions](#set-up-the-db) about creating the default user, and that you are logged in 
 
-There is a file in the lib/tasks/seed/seed_files/csv/ folder named 'ano-2021.csv' that contains the data to be loaded. You can use it if you will
+There is [This file](/lib/tasks/seed/seed_files/csv/ano-2021.csv) that contains the data to be loaded. You can use it if you will
 
 ## Code coverage
 
