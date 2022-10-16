@@ -6,6 +6,8 @@ class DeputiesController < ApplicationController
   before_action :set_page, only: %i[ show index ]
   before_action :set_util, only: %i[ show index ]
 
+  before_action :authenticate_user!, only: %i[ create new ]
+
   # GET /deputies or /deputies.json
   def index
     @deputy_name = params[:deputy_name].present? ? params[:deputy_name] : ''
