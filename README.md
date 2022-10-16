@@ -14,7 +14,7 @@ The configuration of this project is correct assuming you will run everything us
 
 ```
 $ docker-compose ps
-       Name                     Command                       State                Ports         
+Name                        Command                           State           Ports         
 --------------------------------------------------------------------------------------------
 desafio-backend_web_1       bundle exec rails s -b 0.0.0.0    Up (healthy)    0.0.0.0:3000->3000/tcp
 desafio-backend_postgres_1  docker-entrypoint.sh postgres     Up (healthy)    0.0.0.0:5432->5432/tcp
