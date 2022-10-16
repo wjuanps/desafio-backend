@@ -1,47 +1,134 @@
-# Ranking dos gastos dos Deputados
+# Desafio Backend
 
-Estamos muito felizes que você tenha chegado nessa etapa do nosso processo seletivo, para essa fase, desejamos que você resolva um desafio. Nosso desafio consiste em analisar alguns dados disponibilizados pelo Câmara dos Deputados relativos aos gastos dos parlamentares. A ideia é descobrir quem, do seu estado, está gastando mais e exibir de forma resumida esses principais gastos.
+## Stack
+- Ruby 2.7.5
+- Ruby on Rails 6
+- Postgres 11
+- Redis 5.0.2 (not really used currently)
 
-## Descrição do desafio
+## Run everything using Docker
 
-Você já ouviu falar da CEAP? A Cota para o Exercício da Atividade Parlamentar, custeia as despesas do mandato, como passagens aéreas e conta de celular. Algumas são reembolsadas, como as com os Correios, e outras são pagas por débito automático, como a compra de passagens. Nos casos de reembolso, os deputados têm três meses para apresentar os recibos. O valor mensal não utilizado fica acumulado ao longo do ano. Por esse motivo, em alguns meses o valor gasto pode ser maior que a média mensal. (Fonte: [Portal da Câmara dos Deputados](https://www2.camara.leg.br/transparencia/acesso-a-informacao/copy_of_perguntas-frequentes/cota-para-o-exercicio-da-atividade-parlamentar)). Através do portal da transparência, nós temos acesso a essas despesas e podemos saber como e onde os políticos estão gastando.
+The configuration of this project is correct assuming you will run everything using Docker.  If you want to run not within Docker see [Run Service Directly](#run-service-directly).
 
-## Base de dados e explicações complementares
+### Confirm that serivces are running
 
-- [Fonte de dados (pegar o referente ao ano 2021 em formato CSV)](https://dadosabertos.camara.leg.br/swagger/api.html#staticfile)
-- [Explicação dos campos do arquivo CSV](https://www2.camara.leg.br/transparencia/cota-para-exercicio-da-atividade-parlamentar/explicacoes-sobre-o-formato-dos-arquivos-xml)
-- Ignorar linhas que não tenham no campo `sgUF` o estado que você mora. O objetivo do trabalho é focar apenas no seu estado;
-- Considerar para fins de cálculos de despesa, o campo `vlrLiquido`. Esse é o valor que de fato foi debitado da cota do candidato;
-- Dica para pegar a foto do político: **http://www.camara.leg.br/internet/deputado/bandep/{ideCadastro}.jpg**
+```
+$ docker-compose ps
+       Name                     Command                       State                Ports         
+--------------------------------------------------------------------------------------------
+desafio-backend_web_1       bundle exec rails s -b 0.0.0.0    Up (healthy)    0.0.0.0:3000->3000/tcp
+desafio-backend_postgres_1  docker-entrypoint.sh postgres     Up (healthy)    0.0.0.0:5432->5432/tcp
+desafio-backend_test_1      bundle exec rspec spec            Exit 1
+desafio-backend_redis_1     docker-entrypoint.sh redis ...    Up (healthy)    0.0.0.0:6381->6379/tcp
+```
 
+You should see output similar to the above.  Notice the port mappings for services such as "postgres" and "web".
 
-## Requisitos Obrigatórios
-- Possibilitar o upload do arquivo;
-- Organizar os dados extraidos do arquivo em tabelas no banco de dados;
-- Listagem dos deputados do seu estado;
-- Mostrar o somatório dos seus gastos;
-- Listar as despesas, mostrando a data(`datEmissao`), estabelecimento(`txtFornecedor`), valor(`vlrLiquido`), e link para a nota(`urlDocumento`);
-- Destacar a maior despesa do candidato;
-- Usar o framework Rails (utilize esse repositório como base);
-- Ter uma cobertura de código;
+### Set up the DB
 
-# Requisitos bônus
-Esses requisitos não são obrigatórios, mas serão levados em consideração como pontos extras no momento da avaliação.
+The first time you run this project, you'll need to set up the database first:
 
-- Exibir gráficos para melhorar a visualização dos gastos;
-- Aplicação hospedada no Heroku, AWS ou similares;
-- Evitar N + 1 nas queries;
-- Organizar estrutura do projeto utilizando padrões de projetos;
+```shell script
+# create database, run migrations, and seed
+docker-compose exec web bundle exec rake db:create
 
-# Critérios de avaliação
+# run migrations
+docker-compose exec web bundle exec rake db:migrate
 
-- Organização do projeto: Avalia a estrutura do projeto, documentação e uso de controle de versão;
-- Coerência: Avalia se os requisitos foram atendidos;
-- Boas práticas: Avalia se o projeto segue boas práticas de desenvolvimento, incluindo segurança e otimização;
-- Criatividade: Avalia o quanto você "pensou fora da caixa", levando em conta soluções criativas para os problemas levantados;
+# create default user
+docker-compose exec web bundle exec rake db:seed
+```
 
-O desafio deve ser entregue nos passando a URL de seu repositório. Fique a vontade caso queira incrementar o projeto com outras features não listadas aqui, iremos levar em consideração também!
+It's necessary to run the seed command in order to create the user necessary for uploading the csv file
+- email: admin@email.com
+- password: test@123456
 
-Qualquer dúvida em relação ao desafio, responderemos por e-mail.
+### Confirm Rails landing page
 
-Bom trabalho!
+- Go to http://localhost:3000/ (Make sure that the port matchs the port mapped in the "docker-compose ps" output from the previous step.)
+- Confirm that you see the Rails "Yay! You’re on Rails!" landing page.
+
+## Run Service Directly
+
+If you want to run the pricing service directly on your computer and not within a Docker container you'll need to do the following.  Note that it's still convenient to run postgres and redis within docker.
+
+- Install necessary prerequisites - PostgreSQL client library
+  ```shell script
+  brew install postgres
+  bundle install
+  ```
+- Update database.yml to point to the postgres instance in the Docker container.
+  ```
+  development:
+    <<: *default
+    host: '127.0.0.1'
+    port: 5432
+    username: postgres
+    database: desafio_backend_development
+  ```
+
+## Run lint and autocorrect offenses
+```shell script
+bundle exec rubocop -a
+```
+[Lint configuration](.rubocop.yml)
+
+## Common Commands
+```shell script
+# install gems
+bundle install
+
+# start console
+docker-compose exec web rails console
+
+# create database, run migrations, and seed
+docker-compose exec web bundle exec rake db:create
+
+# run migrations
+docker-compose exec web bundle exec rake db:migrate
+
+# run migrations in TEST env
+docker-compose run -e "RAILS_ENV=test" web bundle exec rake db:migrate
+
+# run tests
+docker-compose run -e "RAILS_ENV=test" web rspec
+
+# run schema:load
+docker-compose exec web bundle exec rake db:schema:load
+
+# seed dev database
+docker-compose exec web bundle exec rake db:seed
+```
+
+## Load CSV files
+
+You can load the CSV files whether by accessing the '/deputies/new' URL and selecting the desired file or by running the task sync:csv
+
+```
+docker-compose exec web bundle exec rake sync:csv
+```
+
+If you want to upload the file through the system, make sure you have followed the instructions above about creating the default user, and that you are logged in 
+
+There is a file in the lib/tasks/seed/seed_files/csv/ folder named 'ano-2021.csv' that contains the data to be loaded. You can use it if you will
+
+## Code coverage
+
+I am using the SimpleCov tool to generate code coverage reports. After running the tests, open `coverage/index.html` in the browser.
+
+You can open the reports running, in the terminal
+
+Mac
+```
+open coverage/index.html
+```
+
+in a debian/ubuntu Terminal,
+```
+xdg-open coverage/index.html
+```
+
+For more information, see the documentation at [SimpleConv](https://github.com/simplecov-ruby/simplecov)
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
