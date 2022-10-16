@@ -30,10 +30,8 @@ gem 'jbuilder', '~> 2.7'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'carrierwave', '~> 2.0'
-gem 'carrierwave-base64'
-gem 'mini_magick'
-gem 'httparty'
+gem 'kaminari'
+gem "groupdate"
 
 group :development, :test do
   gem 'byebug'
@@ -73,6 +71,3 @@ group :test do
   gem 'webmock'
   gem 'shoulda-matchers'
 end
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
