@@ -43,7 +43,7 @@ It's necessary to run the seed command in order to create the user necessary for
 - email: admin@email.com
 - password: test@123456
 
-### Confirm Rails landing page
+### Confirm Application landing page
 
 - Go to http://localhost:3000/ (Make sure that the port matchs the port mapped in the "docker-compose ps" output from the previous step.)
 
