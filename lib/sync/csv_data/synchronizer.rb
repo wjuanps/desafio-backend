@@ -18,7 +18,7 @@ module Sync
 
       def sync_csv_file(filename)
         data_from_csv = @extractor.extract_data_from_csv(filename)
-        deputies = @transaformer.transform_csv_to_deputy_objects(data_from_csv)
+        deputies = @transformer.transform_csv_to_deputy_objects(data_from_csv)
         @loader.load_deputies(deputies)
       end
     end

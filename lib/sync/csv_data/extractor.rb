@@ -6,12 +6,11 @@ module Sync
       def extract_data_from_csv(filename)
         return nil unless File.exist?(filename)
 
-        csv = CSV.read(filename, headers: true)
+        csv_data = []
+        CSV.foreach(filename, headers: true, encoding: 'bom|utf-8', col_sep: ';') do |row|
+          next unless row['sgUF'] == 'PA'
 
-        csv.map do |row|
-          next unless row['sgUF'].present? && row['sgUF'] == 'PA'
-
-          {
+          csv_data << {
             deputy_identifier: row['ideCadastro'],
             name: row['txNomeParlamentar'],
             taxpayer: row['cpf'],
@@ -22,8 +21,8 @@ module Sync
             legislature_code: row['codLegislatura'],
             sub_quota_number: row['numSubCota'],
             description: row['txtDescricao'],
-            sub_quota_esoecification_number: row['numEspecificacaoSubCota'],
-            description_especification: row['txtDescricaoEspecificacao'],
+            sub_quota_specification_number: row['numEspecificacaoSubCota'],
+            description_specification: row['txtDescricaoEspecificacao'],
             provider_name: row['txtFornecedor'],
             provider_identifier: row['txtCNPJCPF'],
             document_number: row['txtNumero'],
@@ -43,7 +42,9 @@ module Sync
             requester_id: row['nuDeputadoId'],
             document_url: row['urlDocumento']
           }
-        end.compact
+        end
+
+        csv_data.compact
       end
     end
   end

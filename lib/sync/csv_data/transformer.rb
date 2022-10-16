@@ -8,7 +8,7 @@ module Sync
       end
 
       def transform_csv_to_deputy_objects(csv_data)
-        return nil unless csv_data.count.positive?
+        return nil unless csv_data.present? && csv_data.count.positive?
 
         deputies = []
         csv_data.each do |csv|
@@ -26,16 +26,16 @@ module Sync
             quota: {
               sub_quota_number: csv[:sub_quota_number].to_i,
               description: csv[:description],
-              sub_quota_esoecification_number: csv[:sub_quota_esoecification_number].to_i,
-              description_especification: csv[:description_especification]
+              sub_quota_specification_number: csv[:sub_quota_specification_number].to_i,
+              description_specification: csv[:description_specification]
             },
             invoice: {
               document_number: csv[:document_number].to_i,
               document_type: csv[:document_type].to_i,
-              issue_date: Time.new(csv[:issue_date]),
-              document_value: @util.convert_real_to_cents(csv[:document_value]),
-              gross_value:  @util.convert_real_to_cents(csv[:gross_value]),
-              net_value:  @util.convert_real_to_cents(csv[:net_value]),
+              issue_date: @util.format_issue_date(csv[:issue_date], csv[:year], csv[:month]),
+              document_value: csv[:document_value],
+              gross_value:  csv[:gross_value],
+              net_value:  csv[:net_value],
               month: csv[:month].to_i,
               year: csv[:year].to_i,
               installments: csv[:installments].to_i,
@@ -49,7 +49,7 @@ module Sync
             },
             provider: {
               provider_name: csv[:provider_name],
-              provider_identifier: csv[:provider_identifier]
+              provider_identifier: csv[:provider_identifier].present? ? csv[:provider_identifier] : csv[:provider_name]
             }
           }
         end

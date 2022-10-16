@@ -1,25 +1,20 @@
-require 'sync/common/loader_error'
-require 'sync/csv_data/validator'
+require_relative 'loader_error'
+require_relative '../../../app/services/load/load_deputy'
 
 module Sync
   module Common
     class Loader
-      def initialize
-        @validator = Sync::CSV_DATA::Validator.new
-      end
-
       def load_deputies(deputies)
         raise LoaderError, 'Array of deputies can\'t be empty' unless deputies.present? && deputies.count.positive?
 
         loader_errors = []
         deputies.each do |deputy|
           ActiveRecord::Base.transaction do
-            @validator.create_or_update_deputy!(deputy)
-            @validator.create_or_update_legislature!(deputy[:legislature])
-            @validator.create_or_update_quota!(deputy[:quota])
-            @validator.create_or_update_provider!(deputy[:provider])
-            @validator.create_or_update_invoice!(deputy[:invoice])
+            Services::Load::LoadDeputy.call!(deputy)
           end
+        rescue ActiveRecord::RecordInvalid => exception
+          loader_errors << { message: exception.message, deputy: deputy }
+          next
         end
 
         loader_errors
