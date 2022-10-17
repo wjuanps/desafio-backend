@@ -2,9 +2,7 @@ require 'sync/csv_data/util'
 
 class InvoicesController < ApplicationController
 
-  before_action :set_invoice, only: %i[show edit update destroy]
   before_action :set_util, only: %i[index]
-
   before_action :set_filter, only: %i[index]
   before_action :fetch_data_charts, only: %i[index]
   before_action :fetch_political_parties, only: %i[index]
@@ -47,14 +45,17 @@ class InvoicesController < ApplicationController
 
   def fetch_legislature_codes
     @legislature_codes = Legislature.get_legislature_codes
+    @legislature_codes.push(56) unless @legislature_codes.count.positive?
   end
 
   def fetch_states
     @states = Legislature.get_states
+    @states.push('PA') unless @states.count.positive?
   end
 
   def fetch_years
     @years = Invoice.get_years
+    @years.push(2021) unless @years.count.positive?
   end
 
   def fetch_deputies
@@ -87,11 +88,6 @@ class InvoicesController < ApplicationController
 
   def fetch_deputy_expenses
     @deputy_expenses = Invoice.get_expenses_for('deputy_name', @data_charts)
-  end
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_invoice
-    @invoice = Invoice.find(params[:id])
   end
 
   def set_util

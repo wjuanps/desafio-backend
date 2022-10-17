@@ -7,9 +7,10 @@ class Invoice < ApplicationRecord
   belongs_to :deputy_quotum, class_name: 'DeputyQuotum', foreign_key: 'deputy_quota_id'
   validates :document_number, presence: true, allow_blank: false
 
-  scope :get_invoices_by_deputy, lambda { |deputy_id|
-    includes(:provider).where(deputy_id: deputy_id).order(net_value: :desc)
-  }
+  # Workaround to handling with special caracters. I'd like to use the unaccent
+  # method, but I haven't found a way to do it with docker
+  TRANSLATE_FROM = 'ÁÀÂÃÄáàâãäÉÈÊËéèêëÍÌÎÏíìîïÓÒÕÔÖóòôõöÚÙÛÜúùûüÇç'.freeze
+  TRANSLATE_TO = 'AAAAAaaaaaEEEEeeeeIIIIiiiiOOOOOoooooUUUUuuuuÇc'.freeze
 
   scope :total_expenses, lambda {
     pluck(:net_value).sum
@@ -19,19 +20,10 @@ class Invoice < ApplicationRecord
     order(year: :desc).pluck(:year).uniq
   }
 
-  scope :get_by_deputies, lambda { |invoices|
-    invoices.left_joins(:deputy)
-      .group(:name)
-      .group_by_year(:issue_date, format: '%Y')
-      .sum(:net_value)
-  }
-
-  scope :get_months, ->(invoices) { invoices.pluck(:month).uniq }
-
   scope :maximum_expense, -> { pluck(:net_value).max }
 
   scope :get_monthly_expenses, lambda { |data_charts|
-    data_charts.group_by_month { |u| I18n.l([u['year'], u['month'], 1].join('-').to_date) }
+    data_charts.group_by_month { |u| u['issue_date'] }
       .to_h { |k, v| [k, v.map { |h| h['net_value'].to_f }.sum] }
   }
 
@@ -40,13 +32,19 @@ class Invoice < ApplicationRecord
       .to_h { |k, v| [k, v.map { |h| h['net_value'].to_f }.sum] }
   }
 
-  def self.get_data_for_charts(chart_params)
-    query = data_charts_query(chart_params)
+  scope :get_deputy_expenses, lambda { |params|
+    joins(:provider)
+      .where("deputy_id = #{params[:deputy_id]} #{deputy_expenses_filter(params)}")
+      .order(net_value: :desc)
+  }
+
+  def self.get_data_for_charts(params)
+    query = data_charts_query(params)
 
     ActiveRecord::Base.connection.exec_query(query)
   end
 
-  def self.data_charts_query(chart_params)
+  def self.data_charts_query(params)
     "
       select
         d.name as deputy_name,
@@ -64,44 +62,71 @@ class Invoice < ApplicationRecord
       left join providers p on p.id = i.provider_id
       where
         d.id = i.deputy_id
-        #{deputy_taxpayer_statement(chart_params)}
-        #{legislature_code_statement(chart_params)}
-        #{year_statement(chart_params)}
-        #{month_statement(chart_params)}
-        #{political_party_statement(chart_params)}
-        #{state_statement(chart_params)}
-        #{provider_identifier_statement(chart_params)}
+        #{deputy_taxpayer_statement(params)}
+        #{legislature_code_statement(params)}
+        #{year_statement(params)}
+        #{month_statement(params)}
+        #{political_party_statement(params)}
+        #{state_statement(params)}
+        #{provider_identifier_statement(params)}
     ".freeze
   end
 
-  def self.deputy_taxpayer_statement(chart_params)
-    "and d.taxpayer like '%#{chart_params[:deputy_taxpayer]}%'"
+  def self.deputy_expenses_filter(params)
+    if params[:deputy_id].present?
+      return "
+        and (
+          cast(invoices.document_number as text) like '%#{params[:document_number]}%'
+          and translate(lower(providers.name), '#{TRANSLATE_FROM}', '#{TRANSLATE_TO}') like (
+            '%#{ActiveSupport::Inflector.transliterate(params[:provider_name]).downcase}%'
+          )
+          #{params[:net_value].present? ? 'and invoices.net_value*100 ' "#{params[:net_value_type]} #{params[:net_value]}" : ''}
+          #{issue_date_statement(params)}
+        )
+      ".freeze
+    end
+
+    ''
   end
 
-  def self.legislature_code_statement(chart_params)
-    chart_params[:legislature_code].present? ? "and l.legislature_code = #{chart_params[:legislature_code]}" : ''
+  def self.deputy_taxpayer_statement(params)
+    "and d.taxpayer like '%#{params[:deputy_taxpayer]}%'"
   end
 
-  def self.year_statement(chart_params)
-    chart_params[:year].present? ? "and TO_CHAR(i.issue_date, 'YYYY') = '#{chart_params[:year]}'" : ''
+  def self.legislature_code_statement(params)
+    params[:legislature_code].present? ? "and l.legislature_code = #{params[:legislature_code]}" : ''
   end
 
-  def self.month_statement(chart_params)
-    month = "'#{chart_params[:year]}/#{chart_params[:month].to_s.rjust(2, '0')}'".to_s
-
-    chart_params[:month].present? ? "and TO_CHAR(i.issue_date, 'YYYY/MM') = #{month}" : ''
+  def self.year_statement(params)
+    params[:year].present? ? "and TO_CHAR(i.issue_date, 'YYYY') = '#{params[:year]}'" : ''
   end
 
-  def self.political_party_statement(chart_params)
-    chart_params[:political_party].present? ? "and l.political_party = '#{chart_params[:political_party]}'" : ''
+  def self.month_statement(params)
+    month = "'#{params[:year]}/#{params[:month].to_s.rjust(2, '0')}'".to_s
+
+    params[:month].present? ? "and TO_CHAR(i.issue_date, 'YYYY/MM') = #{month}" : ''
   end
 
-  def self.state_statement(chart_params)
-    chart_params[:state].present? ? "and l.state = '#{chart_params[:state]}'" : ''
+  def self.political_party_statement(params)
+    params[:political_party].present? ? "and l.political_party = '#{params[:political_party]}'" : ''
   end
 
-  def self.provider_identifier_statement(chart_params)
-    chart_params[:provider_identifier].present? ? "and p.provider_identifier = '#{chart_params[:provider_identifier]}'" : ''
+  def self.state_statement(params)
+    params[:state].present? ? "and l.state = '#{params[:state]}'" : ''
+  end
+
+  def self.provider_identifier_statement(params)
+    params[:provider_identifier].present? ? "and p.provider_identifier = '#{params[:provider_identifier]}'" : ''
+  end
+
+  def self.issue_date_statement(params)
+    statement = "and invoices.issue_date between '#{params[:issue_date_start]}'" 'and ' "'#{params[:issue_date_end]}'".freeze
+    return statement if params[:issue_date_start].present? && params[:issue_date_end].present?
+
+    statement = "and invoices.issue_date >= '#{params[:issue_date_start]}'".freeze
+    return statement if params[:issue_date_start].present? && params[:issue_date_end].nil?
+
+    ''
   end
 
 end
