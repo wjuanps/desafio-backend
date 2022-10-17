@@ -21,23 +21,27 @@
         <div class="container">
           <div class="nav-wrapper">
             <%= link_to 'Ruan Soares', root_path, class: 'brand-logo' %>
-            <% if user_signed_in? %>
-              <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <%= link_to 'Sair', destroy_user_session_path, :method => :delete  %>
-              </ul>
-            <% end %>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <%= link_to 'Cadastrar deputados', deputies_new_path %>
-            </ul>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <%= link_to 'Gráficos', invoices_charts_path %>
-            </ul>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <%= link_to 'Início', deputies_path %>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+              <li><%= link_to 'Início', deputies_path %></li>
+              <li><%= link_to 'Gráficos', invoices_charts_path %></li>
+              <li><%= link_to 'Cadastrar deputados', deputies_new_path %></li>
+              <% if user_signed_in? %>
+                <li><%= link_to 'Sair', destroy_user_session_path, :method => :delete  %></li>
+              <% end %>
             </ul>
           </div>
         </div>
       </nav>
+
+      <ul class="sidenav" id="mobile-demo">
+        <li><%= link_to 'Início', deputies_path %></li>
+        <li><%= link_to 'Gráficos', invoices_charts_path %></li>
+        <li><%= link_to 'Cadastrar deputados', deputies_new_path %></li>
+        <% if user_signed_in? %>
+          <li><%= link_to 'Sair', destroy_user_session_path, :method => :delete  %></li>
+        <% end %>
+      </ul>
 
       <div class="container">
         <%= yield %>
@@ -79,5 +83,12 @@
         })
       </script>
     <% end %>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.sidenav');
+      M.Sidenav.init(elems);
+    });
+  </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 <div class="row">
+  <h4 class="header"><%= @deputy.name %>, <%= @deputy.legislatures.last.political_party %></h4>
   <div class="col s12 m12">
-    <h4 class="header"><%= @deputy.name %></h4>
     <div class="row card-panel white lighten-5 z-depth-1">
       <div class="col s12 m3">
           <img class="responsive-img" style="height: 25vh" src="<%= @deputy.photo_url %>">
@@ -10,27 +10,22 @@
           <div class="col s6 m4">
             <p><strong>CPF:</strong></p>
             <p><strong>Identificador:</strong></p>
+            <p><strong>Ano base:</strong></p>
             <p><strong>Carteira parlamentar:</strong></p>
-            <p><strong>Estado:</strong></p>
-            <p><strong>Partido:</strong></p>
             <p><strong>Legislatura:</strong></p>
+            <p><strong>Estado:</strong></p>
           </div>
           <div class="col s6 m8">
             <p><%= "#{@deputy.taxpayer[0,3]}.#{@deputy.taxpayer[3,3]}.#{@deputy.taxpayer[6,3]}-#{@deputy.taxpayer[9,2]}" %></p>
             <p><%= @deputy.deputy_identifier %></p>
+            <p><%= @deputy.legislatures.last.legislature_number %></p>
             <p><%= @deputy.legislatures.last.parliamentary_card %></p>
-            <p><%= @deputy.legislatures.last.state %></p>
-            <p><%= @deputy.legislatures.last.political_party %></p>
             <p><%= @deputy.legislatures.last.legislature_code %></p>
+            <p><%= @deputy.legislatures.last.state %></p>
           </div>  
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="col s12 m12">
-    <h5>Despesas</h5>
-    <div class="row">
       <div class="col s12 m12" style="margin-bottom: 3vh">
         <table class="striped highlight responsive-table">
           <thead>
@@ -44,49 +39,124 @@
               <tr>
                 <td><%= @total_expenses %></td>
                 <td><%= @util.convert_cents_to_real(@max_expense.net_value) %> no estabelecimento <%= @max_expense.provider.name %> em <%= @max_expense.issue_date.strftime("%d/%m/%Y") %></td>
-                <td><a href="<%= invoices_charts_path(legislatureCode: @current_legislature.legislature_code, politicalParty: @current_legislature.political_party, state: @current_legislature.state, deputyTaxpayer: @deputy.taxpayer) %>" class="btn-small waves-effect waves-light red tooltipped" data-position="bottom" data-tooltip="Visualizar gráficos"><i class="material-icons">timeline</i></a><td>
+                <td><a href="<%= invoices_charts_path(legislature_code: @current_legislature.legislature_code, political_party: @current_legislature.political_party, state: @current_legislature.state, deputy_taxpayer: @deputy.taxpayer) %>" class="btn-small waves-effect waves-light red tooltipped" data-position="bottom" data-tooltip="Visualizar gráficos"><i class="material-icons">timeline</i></a><td>
               </tr>
             </tbody>
           </thead>
         </table>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="col s12 m12">
-        <table class="striped highlight responsive-table">
-          <thead>
+<div class="col s12 m12">
+  <h4>Despesas</h4>
+
+  <div class="row">
+    <br />
+    <div class="col s12 m12">
+      <a class="waves-effect waves-light btn modal-trigger blue" href="#filterExpensesModal">Filtros</a>
+      <a href="<%= deputies_show_path %>" class="waves-effect waves-light btn red lighten-2">Resetar filtro</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12 m12 responsive-table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+              <th>Número do documento</th>
+              <th>Data de emissão</th>
+              <th>Estabelecimento</th>
+              <th>Valor</th>
+              <th>Link para nota</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @invoices.each do |invoice| %>
             <tr>
-                <th>Número do documento</th>
-                <th>Data de emissão</th>
-                <th>Estabelecimento</th>
-                <th>Valor</th>
-                <th>Link para nota</th>
+              <td><%= invoice.document_number %></td>
+              <td><%= invoice.issue_date.strftime("%d/%m/%Y") %></td>
+              <td><%= invoice.provider.name %></td>
+              <td><%= @util.convert_cents_to_real(invoice.net_value) %></td>
+              <td class="center-align"><a href="<%= invoice.document_url %>" target="_blank" class="tooltipped" data-position="bottom" data-tooltip="Nota fiscal"><i class="material-icons prefix">insert_link</i></a></td>
             </tr>
-          </thead>
+          <% end %>
+        </tbody>
+      </table>
 
-          <tbody>
-            <% @invoices.each do |invoice| %>
-              <tr>
-                <td><%= invoice.document_number %></td>
-                <td><%= invoice.issue_date.strftime("%d/%m/%Y") %></td>
-                <td><%= invoice.provider.name %></td>
-                <td><%= @util.convert_cents_to_real(invoice.net_value) %></td>
-                <td class="center-align"><a href="<%= invoice.document_url %>" target="_blank"><i class="material-icons prefix">insert_link</i></a></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-
-        <div class="center-align">
-          <%= paginate @invoices %>
-        </div>
+      <div class="center-align">
+        <%= paginate @invoices %>
       </div>
     </div>
   </div>
 </div>
 
+<div id="filterExpensesModal" class="modal bottom-sheet">
+  <div class="modal-content">
+    <form id="filterExpensesForm" class="col s12 m12" action="<%= deputies_show_path %>" method="GET">
+      <div class="row">
+        <div class="input-field col s12 m4">
+          <input placeholder="Número do documento" name="document_number" id="document_number" type="text" value="<%= @filter[:document_number] %>" />
+          <label for="document_number">Número do documento</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <input placeholder="Data inicial" type="text" class="datepicker" name="issue_date_start" id="issue_date_start" value="<%= @filter[:issue_date_start] %>" />
+          <label for="issue_date_start">Data inicial</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <input placeholder="Data inicial" type="text" class="datepicker" name="issue_date_end" id="issue_date_end" value="<%= @filter[:issue_date_end] %>" />
+          <label for="issue_date_end">Data final</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s12 m6">
+          <input placeholder="Estabelecimento" name="provider_name" id="provider_name" type="text" value="<%= @filter[:provider_name] %>" />
+          <label for="provider_name">Estabelecimento</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <input placeholder="Valor" name="net_value" id="net_value" type="number" value="<%= @filter[:net_value] %>" />
+          <label for="net_value">Valor (somente números - centavos)</label>
+        </div>
+        <div class="input-field col s12 m2">
+          <select name="net_value_type" id="net_value_type">
+            <option <%= 'selected' if @filter[:net_value_type] == '=' %> value="=">=</option>
+            <option <%= 'selected' if @filter[:net_value_type] == '>' %> value=">">></option>
+            <option <%= 'selected' if @filter[:net_value_type] == '>=' %> value=">=">>=</option>
+            <option <%= 'selected' if @filter[:net_value_type] == '<' %> value="<"><</option>
+            <option <%= 'selected' if @filter[:net_value_type] == '<=' %> value="<="><=</option>
+          </select>
+          <label for="net_value_type">Critério valor</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="modal-close waves-effect waves-light btn red lighten-2">Cancelar</button>
+    <button id="doFilter" type="button" class="waves-effect waves-light btn blue">Filtrar</button>
+  </div>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.tooltipped');
-    var instances = M.Tooltip.init(elems);
-  });
+  document.addEventListener('DOMContentLoaded', function() {
+    let elems = document.querySelectorAll('.datepicker')
+    M.Datepicker.init(elems)
+
+    elems = document.querySelectorAll('.modal')
+    M.Modal.init(elems)
+
+    elems = document.querySelectorAll('select');
+    M.FormSelect.init(elems);
+
+    elems = document.querySelectorAll('.tooltipped');
+    M.Tooltip.init(elems);
+
+    document.getElementById('doFilter').addEventListener('click', handleFilter)
+  })
+
+  const handleFilter = () => {
+    document.getElementById('filterExpensesForm').submit()
+  }
 </script>

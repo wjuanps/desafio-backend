@@ -1,95 +1,95 @@
 <div style="margin-bottom: 3vh"></div>
 
-<% if @data_charts.present? && @data_charts.count.positive? %>
+<form class="col s12" action="<%= invoices_charts_path %>" method="GET">
   <div class="row">
-    <form class="col s12" action="<%= invoices_charts_path %>" method="GET">
-      <div class="row">
-        <div class="input-field col s4">
-          <select name="legislature_code" id="legislature_code">
-            <% @legislature_codes.each do |code| %>
-              <option <%= 'selected' if @legislature_code == code %> value="<%= code %>"><%= code %></option>
-            <% end %>
-          </select>
-          <label for="legislature_code">Legislatura</label>
-        </div>
-        <div class="input-field col s4">
-          <select name="year" id="year">
-            <% @years.each do |year| %>
-              <option <%= 'selected' if @year == year %> value="<%= year %>"><%= year %></option>
-            <% end %>
-          </select>
-          <label for="year">Ano</label>
-        </div>
-        <div class="input-field col s4">
-          <select name="month" id="month">
-            <option <%= 'selected' if @month.nil? %> <%= 'selected' if @year.nil? %> value="">Todos os meses</option>
-            <option <%= 'selected' if @month == '1' %> value="1">Janeiro</option>
-            <option <%= 'selected' if @month == '2' %> value="2">Fevereiro</option>
-            <option <%= 'selected' if @month == '3' %> value="3">Março</option>
-            <option <%= 'selected' if @month == '4' %> value="4">Abril</option>
-            <option <%= 'selected' if @month == '5' %> value="5">Maio</option>
-            <option <%= 'selected' if @month == '6' %> value="6">Junho</option>
-            <option <%= 'selected' if @month == '7' %> value="7">Julho</option>
-            <option <%= 'selected' if @month == '8' %> value="8">Agosto</option>
-            <option <%= 'selected' if @month == '9' %> value="9">Setembro</option>
-            <option <%= 'selected' if @month == '10' %> value="10">Outubro</option>
-            <option <%= 'selected' if @month == '11' %> value="11">Novembro</option>
-            <option <%= 'selected' if @month == '12' %> value="12">Dezembro</option>
-          </select>
-          <label for="month">Mês</label>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="input-field col s6 m6">
-          <select name="political_party" id="political_party">
-            <option value="">Todos os partidos</option>
-            <% @political_parties.each do |political_party| %>
-              <option <%= 'selected' if @political_party == political_party %> value="<%= political_party %>"><%= "#{political_party} - #{PoliticalPartyHelper.political_party_name_from_political_party_code(political_party)}" %></option>
-            <% end %>
-          </select>
-          <label for="political_party">Partido</label>
-        </div>
-        <div class="input-field col s6 m6">
-          <select name="state" id="state">
-            <% @states.each do |state| %>
-              <option <%= 'selected' if @state == state %> value="<%= state %>"><%= StateHelper.state_name_from_state_code(state) %></option>
-            <% end %>
-          </select>
-          <label for="state">Estado</label>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="input-field col s6 m6">
-          <select name="deputy_taxpayer" id="deputy_taxpayer" class="icons">
-            <option value="">Todos os deputados</option>
-            <% @deputies.each do |deputy| %>
-              <option <%= 'selected' if @deputy_taxpayer == deputy.taxpayer %> value="<%= deputy.taxpayer %>" data-icon="<%= deputy.photo_url %>"><%= deputy.name %>, <%= deputy.legislatures.last.political_party %></option>
-            <% end %>
-          </select>
-          <label for="deputy_taxpayer">Deputado</label>
-        </div>
-        <div class="input-field col s6 m6">
-          <select name="provider_identifier" id="provider_identifier">
-            <option value="">Todos os fornecedores</option>
-            <% @providers.each do |provider| %>
-              <option <%= 'selected' if @provider_identifier == provider.provider_identifier && !provider.provider_identifier.blank? %> value="<%= provider.provider_identifier %>"><%= "#{provider.name} - #{provider.provider_identifier}" %></option>
-            <% end %>
-          </select>
-          <label for="provider_identifier">Fornecedor</label>
-        </div>
-      </div>
-
-      <button type="submit" class="waves-effect waves-light btn blue">Filtrar</button>
-      <a href="<%= invoices_charts_path %>" class="waves-effect waves-light btn red lighten-2">Resetar filtro</a>
-    </form>
+    <div class="input-field col s12 m4">
+      <select name="legislature_code" id="legislature_code">
+        <% @legislature_codes.each do |code| %>
+          <option <%= 'selected' if @filter[:legislature_code] == code %> value="<%= code %>"><%= code %></option>
+        <% end %>
+      </select>
+      <label for="legislature_code">Legislatura</label>
+    </div>
+    <div class="input-field col s12 m4">
+      <select name="year" id="year">
+        <% @years.each do |year| %>
+          <option <%= 'selected' if @filter[:year] == year %> value="<%= year %>"><%= year %></option>
+        <% end %>
+      </select>
+      <label for="year">Ano</label>
+    </div>
+    <div class="input-field col s12 m4">
+      <select name="month" id="month">
+        <option <%= 'selected' if @filter[:month].nil? %> <%= 'selected' if @filter[:year].nil? %> value="">Todos os meses</option>
+        <option <%= 'selected' if @filter[:month] == '1' %> value="1">Janeiro</option>
+        <option <%= 'selected' if @filter[:month] == '2' %> value="2">Fevereiro</option>
+        <option <%= 'selected' if @filter[:month] == '3' %> value="3">Março</option>
+        <option <%= 'selected' if @filter[:month] == '4' %> value="4">Abril</option>
+        <option <%= 'selected' if @filter[:month] == '5' %> value="5">Maio</option>
+        <option <%= 'selected' if @filter[:month] == '6' %> value="6">Junho</option>
+        <option <%= 'selected' if @filter[:month] == '7' %> value="7">Julho</option>
+        <option <%= 'selected' if @filter[:month] == '8' %> value="8">Agosto</option>
+        <option <%= 'selected' if @filter[:month] == '9' %> value="9">Setembro</option>
+        <option <%= 'selected' if @filter[:month] == '10' %> value="10">Outubro</option>
+        <option <%= 'selected' if @filter[:month] == '11' %> value="11">Novembro</option>
+        <option <%= 'selected' if @filter[:month] == '12' %> value="12">Dezembro</option>
+      </select>
+      <label for="month">Mês</label>
+    </div>
   </div>
 
+  <div class="row">
+    <div class="input-field col s12 m6">
+      <select name="political_party" id="political_party">
+        <option value="">Todos os partidos</option>
+        <% @political_parties.each do |political_party| %>
+          <option <%= 'selected' if @filter[:political_party] == political_party %> value="<%= political_party %>"><%= "#{political_party} - #{PoliticalPartyHelper.political_party_name_from_political_party_code(political_party)}" %></option>
+        <% end %>
+      </select>
+      <label for="political_party">Partido</label>
+    </div>
+    <div class="input-field col s12 m6">
+      <select name="state" id="state">
+        <% @states.each do |state| %>
+          <option <%= 'selected' if @filter[:state] == state %> value="<%= state %>"><%= StateHelper.state_name_from_state_code(state) %></option>
+        <% end %>
+      </select>
+      <label for="state">Estado</label>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12 m6">
+      <select name="deputy_taxpayer" id="deputy_taxpayer" class="icons">
+        <option value="">Todos os deputados</option>
+        <% @deputies.each do |deputy| %>
+          <option <%= 'selected' if @filter[:deputy_taxpayer] == deputy.taxpayer %> value="<%= deputy.taxpayer %>" data-icon="<%= deputy.photo_url %>"><%= deputy.name %>, <%= deputy.legislatures.last.political_party %></option>
+        <% end %>
+      </select>
+      <label for="deputy_taxpayer">Deputado</label>
+    </div>
+    <div class="input-field col s12 m6">
+      <select name="provider_identifier" id="provider_identifier">
+        <option value="">Todos os fornecedores</option>
+        <% @providers.each do |provider| %>
+          <option <%= 'selected' if @filter[:provider_identifier] == provider.provider_identifier && !provider.provider_identifier.blank? %> value="<%= provider.provider_identifier %>"><%= "#{provider.name} - #{provider.provider_identifier}" %></option>
+        <% end %>
+      </select>
+      <label for="provider_identifier">Fornecedor</label>
+    </div>
+  </div>
+
+  <button type="submit" class="waves-effect waves-light btn blue">Filtrar</button>
+  <a href="<%= invoices_charts_path %>" class="waves-effect waves-light btn red lighten-2">Resetar filtro</a>
+</form>
+
+<% if @data_charts.present? && @data_charts.count.positive? %>
+  <br />
   <% if @monthly_expenses.present? && @monthly_expenses.count.positive? && @daily_expenses.nil? %>
-    <div id="monthlyExpensePanel" class="row">
+    <div id="monthlyExpensePanel">
+      <div class="divider"></div>
       <div class="col s12 m12">
-        <h5>Gastos mensais em <%= @year %><%= " - #{@political_party}" if @political_party.present? && !@political_party.empty? %></h5>
+        <h5>Gastos mensais em <%= @filter[:year] %><%= " - #{@filter[:political_party]}" if @filter[:political_party].present? && !@filter[:political_party].empty? %></h5>
         <canvas id="monthlyExpenseChart" with="100%" height="100"></canvas>
       </div>
     </div>
@@ -98,19 +98,23 @@
   <% end %>
 
   <% if @daily_expenses.present? && @daily_expenses.count.positive? && @monthly_expenses.nil? %>
+    <br />
     <div id="dailyExpensesPanel" class="row">
+      <div class="divider"></div>
       <div class="col s12 m12">
-        <h5>Gastos do mês de <%= MonthHelper.month_name_from_month_code(@month) %></h5>
+        <h5>Gastos do mês de <%= MonthHelper.month_name_from_month_code(@filter[:month]) %></h5>
         <canvas id="dailyExpensesChart" with="100%" height="100"></canvas>
       </div>
     </div>
 
-    <%= content_tag :div, id: "dailyExpenses", data: {temp: @dailyexpenses} do %><% end %>
-    <%= content_tag :div, id: "dailyExpensesMonth", data: {temp: MonthHelper.month_name_from_month_code(@month)} do %><% end %>
+    <%= content_tag :div, id: "dailyExpenses", data: {temp: @daily_expenses} do %><% end %>
+    <%= content_tag :div, id: "dailyExpensesMonth", data: {temp: MonthHelper.month_name_from_month_code(@filter[:month])} do %><% end %>
   <% end %>
 
   <div class="row">
-    <div class="col s6 m6">
+    <br />
+    <div class="divider"></div>
+    <div class="col s12 m6">
       <% if @deputy_expenses.present? && @deputy_expenses.count.positive? %>
         <div id="deputyExpensesPanel" class="row">
           <div class="col s12 m12">
@@ -123,7 +127,7 @@
       <% end %>
     </div>
 
-    <div class="col s6 m6">
+    <div class="col s12 m6">
       <% if @political_party_expenses.present? && @political_party_expenses.count.positive? %>
         <div id="politicalPartyExpensesPanel" class="row">
           <div class="col s12 m12">
@@ -138,7 +142,8 @@
   </div>
 
   <div class="row">
-    <div class="col s6 m6">
+    <div class="divider"></div>
+    <div class="col s12 m6">
       <% if @type_expenses.present? && @type_expenses.count.positive? %>
         <div id="typeExpensesPanel" class="row">
           <div class="col s12 m12">
@@ -151,7 +156,7 @@
       <% end %>
     </div>
 
-    <div class="col s6 m6">
+    <div class="col s12 m6">
       <% if @provider_expenses.present? && @provider_expenses.count.positive? %>
         <div id="providerExpensesPanel" class="row">
           <div class="col s12 m12">
@@ -164,8 +169,18 @@
       <% end %>
     </div>
   </div>
+<% else %>
+  <div class="row" style="margin-top: 7vh">
+    <div class="center-align valign-center" style="height: 50vh">
+      <h5>Não foram encontrados dados para sua pesquisa</h5><br />
+      <%= link_to "Resetar filtros", invoices_charts_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
+      <%= link_to "Cadastrar novos deputados", deputies_new_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
+    </div>
+  </div>
+<% end %>
+<br />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -354,12 +369,3 @@
       return colors
     }
   </script>
-<% else %>
-  <div class="row" style="margin-top: 7vh">
-    <div class="center-align valign-center" style="height: 50vh">
-      <h5>Não foram encontrados dados para sua pesquisa</h5><br />
-      <%= link_to "Resetar filtros", invoices_charts_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
-      <%= link_to "Cadastrar novos deputados", deputies_new_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
-    </div>
-  </div>
-<% end %>
