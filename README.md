@@ -11,6 +11,10 @@
 
 The configuration of this project is correct assuming you will run everything using Docker.  If you want to run not within Docker see [Run Service Directly](#run-service-directly).
 
+### Set up the Application
+
+Run the "docker-compose build" and "docker-compose up -d" steps. This process takes about 5 minutes.
+
 ```
 docker-compose build
 docker-compose up -d
