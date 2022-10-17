@@ -1,4 +1,3 @@
-
 require 'rails_helper'
 
 RSpec.describe PoliticalPartyHelper do
@@ -15,7 +14,9 @@ RSpec.describe PoliticalPartyHelper do
       let(:expected_political_party) { 'PARTIDO VERDE' }
 
       it 'returns PARTIDO VERDE' do
-        expect(PoliticalPartyHelper.political_party_name_from_political_party_code(political_party)).to eq(expected_political_party)
+        expect do
+          PoliticalPartyHelper.political_party_name_from_political_party_code(political_party)
+        end.to eq(expected_political_party)
       end
     end
   end

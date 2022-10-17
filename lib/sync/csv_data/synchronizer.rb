@@ -4,8 +4,9 @@ require_relative 'extractor'
 require_relative 'transformer'
 
 module Sync
-  module CSV_DATA
+  module CSVData
     class Synchronizer
+
       def initialize
         @extractor = Extractor.new
         @transformer = Transformer.new
@@ -21,6 +22,7 @@ module Sync
         deputies = @transformer.transform_csv_to_deputy_objects(data_from_csv)
         @loader.load_deputies(deputies)
       end
+
     end
   end
 end

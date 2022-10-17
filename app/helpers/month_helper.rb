@@ -16,6 +16,7 @@ module MonthHelper
 
   def self.month_name_from_month_code(month_code)
     return '' unless month_code.present?
+
     CUSTOM_MONTH_NAMES.fetch(month_code.to_i, nil)
   end
 end

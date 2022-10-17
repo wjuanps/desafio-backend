@@ -5,7 +5,7 @@ namespace :sync do
 
     LOCAL_CSV_FILE = 'lib/tasks/seed/seed_files/csv/ano-2021.csv'.freeze
 
-    synchronizer = Sync::CSV_DATA::Synchronizer.new
+    synchronizer = Sync::CSVData::Synchronizer.new
     csv_file = args[:csv_file].present? ? args[:csv_file] : LOCAL_CSV_FILE
 
     synchronizer.sync(csv_file)

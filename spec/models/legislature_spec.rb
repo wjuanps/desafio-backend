@@ -14,7 +14,7 @@ RSpec.describe Legislature do
         expect(legislature.valid?).to be(false)
       end
     end
-    
+
     context 'when legislature_number, legislature_code are all present' do
       before do
         legislature.legislature_number = rand(1...10)
@@ -31,7 +31,7 @@ RSpec.describe Legislature do
     context 'has_many :deputy_quota' do
       let!(:deputy_quota) { create(:deputy_quotum, legislature: legislature) }
       let!(:other_deputy_quota) { create(:deputy_quotum, legislature: legislature) }
-      
+
       it 'should have deputy_quota' do
         expect(legislature.deputy_quota.count).to eq(2)
         expect(legislature.deputy_quota).to include(deputy_quota)

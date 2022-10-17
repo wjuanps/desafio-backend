@@ -4,6 +4,7 @@
 - Ruby 2.7.5
 - Ruby on Rails 6
 - Postgres 11
+- Rubocop 0.93.1
 - Redis 5.0.2 (not really used currently)
 
 ## Run everything using Docker
@@ -102,7 +103,7 @@ docker-compose exec web bundle exec rake db:seed
 
 ## Load CSV files
 
-You can load the CSV files whether by accessing the [Upload csv page]('http://localhost:3000/deputies/new') page and selecting the desired file or by running the task sync:csv
+You can load the CSV files whether by accessing the [Upload csv page](http://localhost:3000/deputies/new) page and selecting the desired file or by running the task sync:csv
 
 ```
 docker-compose exec web bundle exec rake sync:csv

@@ -1,4 +1,5 @@
 class CreateDeputyQuota < ActiveRecord::Migration[6.0]
+
   def change
     create_table :deputy_quota do |t|
       t.integer :sub_quota_number, null: false
@@ -11,4 +12,5 @@ class CreateDeputyQuota < ActiveRecord::Migration[6.0]
       t.timestamps
     end
   end
+
 end

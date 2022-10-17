@@ -1,4 +1,6 @@
 class CreateInvoices < ActiveRecord::Migration[6.0]
+
+  # rubocop:disable Metrics/AbcSize
   def change
     create_table :invoices do |t|
       t.integer :document_number, null: false, limit: 8
@@ -25,4 +27,6 @@ class CreateInvoices < ActiveRecord::Migration[6.0]
       t.timestamps
     end
   end
+  # rubocop:enable Metrics/AbcSize
+
 end

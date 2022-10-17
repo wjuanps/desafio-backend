@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'sync/csv_data/extractor'
 
-RSpec.describe Sync::CSV_DATA::Extractor do
+RSpec.describe Sync::CSVData::Extractor do
   subject(:extractor) { described_class.new }
 
   describe 'Extract data from CSV file' do

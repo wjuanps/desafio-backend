@@ -30,6 +30,7 @@ module StateHelper
 
   def self.state_name_from_state_code(state_code)
     return nil unless state_code.present?
+
     CUSTOM_STATE_NAMES.fetch(state_code, nil)
   end
 end

@@ -35,6 +35,7 @@ module PoliticalPartyHelper
 
   def self.political_party_name_from_political_party_code(political_party)
     return '' unless political_party.present?
+
     CUSTOM_POLITICAL_PARTY_NAMES.fetch(political_party, nil)
   end
 end

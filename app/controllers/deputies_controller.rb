@@ -3,10 +3,11 @@ require 'sync/csv_data/util'
 require 'csv'
 
 class DeputiesController < ApplicationController
-  before_action :set_page, only: %i[ show index ]
-  before_action :set_util, only: %i[ show index ]
 
-  before_action :authenticate_user!, only: %i[ create new ]
+  before_action :set_page, only: %i[show index]
+  before_action :set_util, only: %i[show index]
+
+  before_action :authenticate_user!, only: %i[create new]
 
   # GET /deputies or /deputies.json
   def index
@@ -20,7 +21,7 @@ class DeputiesController < ApplicationController
     @deputy = Deputy.find_by_id(params[:id])
 
     if @deputy.nil?
-      redirect_to root_path, notice: "Deputado não encontrado"
+      redirect_to root_path, notice: 'Deputado não encontrado'
     else
       @invoices = Invoice.get_invoices_by_deputy(@deputy.id).page(@page).per(10)
       @total_expenses = @util.convert_cents_to_real(@deputy.invoices.total_expenses)
@@ -39,7 +40,7 @@ class DeputiesController < ApplicationController
     file = params[:deputy][:file]
     filename = File.expand_path(file)
 
-    @synchronizer = Sync::CSV_DATA::Synchronizer.new
+    @synchronizer = Sync::CSVData::Synchronizer.new
     @synchronizer.sync(filename)
 
     redirect_to root_path, notice: 'Deputados cadastrados com sucesso!!'
@@ -53,6 +54,7 @@ class DeputiesController < ApplicationController
   end
 
   def set_util
-    @util = Sync::CSV_DATA::Util.new
+    @util = Sync::CSVData::Util.new
   end
+
 end

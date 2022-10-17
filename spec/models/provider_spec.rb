@@ -13,11 +13,11 @@ RSpec.describe Provider do
         expect(provider.valid?).to be(false)
       end
     end
-    
+
     context 'when name and provider_identifier are all present' do
       before do
-        provider.name = "Ruan Soares"
-        provider.provider_identifier = 743543416354635
+        provider.name = 'Ruan Soares'
+        provider.provider_identifier = 743_543_416_354_635
       end
 
       it 'is valid' do
@@ -33,7 +33,7 @@ RSpec.describe Provider do
       let!(:deputy_quota) { create(:deputy_quotum, legislature: legislature) }
       let!(:invoice) { create(:invoice, deputy_quotum: deputy_quota, deputy: deputy, provider: provider) }
       let!(:other_invoice) { create(:invoice, deputy_quotum: deputy_quota, deputy: deputy, provider: provider) }
-      
+
       it 'should have legislatures' do
         expect(provider.invoices.count).to eq(2)
         expect(provider.invoices).to include(invoice)

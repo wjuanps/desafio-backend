@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <div class="row">
   <form id="searchForm" class="col s12" action="<%= root_path %>" method="GET">
     <div class="row">
@@ -33,13 +31,13 @@
             </div>
         </div>
         <div class="card-action">
-          <%= link_to "Detalhar gastos", deputies_show_path(id: deputy.id, name: deputy.get_name), title: "Detalhar deputado" %>
+          <%= link_to "Detalhar gastos", deputies_show_path(id: deputy.id, name: deputy.formated_name), title: "Detalhar deputado" %>
         </div>
       </div>
     </div>
   <% end %>
 <% else %>
-  <div class="center-align">
+  <div class="center-align valign-center" style="height: 50vh">
     <h5>Não foram encontrados deputados para sua pesquisa</h5><br />
     <%= link_to "Resetar filtros", root_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>
     <%= link_to "Cadastrar novos deputados", deputies_new_path, title: "Detalhar deputado", class: "waves-effect waves-teal btn" %>

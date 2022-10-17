@@ -70,18 +70,14 @@
       </div>
     </footer>
 
-    <% if notice.present? %>
-      <div class="hide white-text" id="notice" data-temp="<%= notice %>"></div>
-    <% end %>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", event => {
-        let notice = document.getElementById('notice')
-        if (!!notice) {
-          M.toast({ html: notice.dataset.temp, duration: 3000 });
-        }
-      })
-    </script>
+
+    <% if notice.present? %>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          M.toast({ html: '<%= notice %>' });
+        })
+      </script>
+    <% end %>
   </body>
 </html>

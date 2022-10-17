@@ -10,8 +10,6 @@ module Services
         create_invoice!(deputy[:invoice])
       end
 
-      private
-
       def self.create_deputy!(deputy)
         @deputy = Deputy.find_by(deputy_identifier: deputy[:deputy_identifier])
         return @deputy unless @deputy.nil?
@@ -22,8 +20,8 @@ module Services
                                taxpayer: deputy[:taxpayer])
 
           @deputy.save!
-        rescue => exception
-          raise exception
+        rescue StandardError => e
+          raise e
         end
 
         @deputy
@@ -43,8 +41,8 @@ module Services
                                          political_party: legislature[:political_party])
 
           @legislature.save!
-        rescue => exception
-          raise exception
+        rescue StandardError => e
+          raise e
         end
 
         @legislature
@@ -63,8 +61,8 @@ module Services
                                            description_specification: deputy_quota[:description_specification])
 
           @deputy_quota.save!
-        rescue => exception
-          raise exception
+        rescue StandardError => e
+          raise e
         end
 
         @deputy_quota
@@ -78,8 +76,8 @@ module Services
           @provider = Provider.new(name: provider[:provider_name], provider_identifier: provider[:provider_identifier])
 
           @provider.save!
-        rescue => exception
-          raise exception
+        rescue StandardError => e
+          raise e
         end
 
         @provider
@@ -93,33 +91,40 @@ module Services
         return @invoice unless @invoice.nil?
 
         begin
-          @invoice = Invoice.new(deputy_id: @deputy.id,
-                                 deputy_quota_id: @deputy_quota.id,
-                                 provider_id: @provider.id,
-                                 document_number: invoice[:document_number],
-                                 document_type: invoice[:document_type],
-                                 issue_date: invoice[:issue_date],
-                                 document_value: invoice[:document_value],
-                                 gross_value: invoice[:gross_value],
-                                 net_value: invoice[:net_value],
-                                 year: invoice[:year],
-                                 month: invoice[:month],
-                                 installments: invoice[:installments],
-                                 passenger_name: invoice[:passenger_name],
-                                 leg_trip: invoice[:leg_trip],
-                                 batch: invoice[:batch],
-                                 refund: invoice[:refund],
-                                 restitution: invoice[:restitution],
-                                 document_url: invoice[:document_url],
-                                 requester_id: invoice[:requester_id])
+          @invoice = Invoice.new(invoice_object(invoice))
 
           @invoice.save!
-        rescue => exception
-          raise exception
+        rescue StandardError => e
+          raise e
         end
 
         @invoice
       end
+
+      def self.invoice_object(invoice)
+        {
+          deputy_id: @deputy.id,
+          deputy_quota_id: @deputy_quota.id,
+          provider_id: @provider.id,
+          document_number: invoice[:document_number],
+          document_type: invoice[:document_type],
+          issue_date: invoice[:issue_date],
+          document_value: invoice[:document_value],
+          gross_value: invoice[:gross_value],
+          net_value: invoice[:net_value],
+          year: invoice[:year],
+          month: invoice[:month],
+          installments: invoice[:installments],
+          passenger_name: invoice[:passenger_name],
+          leg_trip: invoice[:leg_trip],
+          batch: invoice[:batch],
+          refund: invoice[:refund],
+          restitution: invoice[:restitution],
+          document_url: invoice[:document_url],
+          requester_id: invoice[:requester_id]
+        }
+      end
+
     end
   end
 end

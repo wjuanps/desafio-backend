@@ -15,10 +15,10 @@ RSpec.describe DeputyQuotum do
         expect(deputy_quotum.sub_quota_number).to be_nil
       end
     end
-    
+
     context 'when sub_quota_number is present' do
       before do
-        deputy_quotum.sub_quota_number = 743543416
+        deputy_quotum.sub_quota_number = 743_543_416
       end
 
       it 'is valid' do
@@ -31,7 +31,7 @@ RSpec.describe DeputyQuotum do
     context 'has_many :invoices' do
       let!(:invoice) { create(:invoice, deputy_quotum: deputy_quotum, deputy: deputy) }
       let!(:other_invoice) { create(:invoice, deputy_quotum: deputy_quotum, deputy: deputy) }
-      
+
       it 'should have invoices' do
         expect(deputy_quotum.invoices.count).to eq(2)
         expect(deputy_quotum.invoices).to include(invoice)

@@ -16,10 +16,10 @@ RSpec.describe Invoice do
         expect(invoice.valid?).to be(false)
       end
     end
-    
+
     context 'when document_number is present' do
       before do
-        invoice.document_number = 743543416354635
+        invoice.document_number = 743_543_416_354_635
       end
 
       it 'is valid' do

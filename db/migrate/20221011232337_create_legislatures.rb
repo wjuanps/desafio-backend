@@ -1,4 +1,5 @@
 class CreateLegislatures < ActiveRecord::Migration[6.0]
+
   def change
     create_table :legislatures do |t|
       t.integer :legislature_number
@@ -12,4 +13,5 @@ class CreateLegislatures < ActiveRecord::Migration[6.0]
       t.timestamps
     end
   end
+
 end

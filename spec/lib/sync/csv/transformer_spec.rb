@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'sync/csv_data/transformer'
 
-RSpec.describe Sync::CSV_DATA::Transformer do
+RSpec.describe Sync::CSVData::Transformer do
   subject(:transaform) { described_class.new }
 
   describe 'Transform data from csv to deputy object' do
