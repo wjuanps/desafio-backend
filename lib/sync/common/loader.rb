@@ -5,7 +5,7 @@ module Sync
   module Common
     class Loader
 
-      def load_deputies(deputies)
+      def load_deputies!(deputies)
         raise LoaderError, 'Array of deputies can\'t be empty' unless deputies.present? && deputies.count.positive?
 
         loader_errors = []
@@ -19,6 +19,8 @@ module Sync
         end
 
         loader_errors
+      rescue StandardError, LoaderError => e
+        raise e
       end
 
     end

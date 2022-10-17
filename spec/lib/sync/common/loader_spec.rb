@@ -11,7 +11,7 @@ RSpec.describe Sync::Common::Loader do
 
       it 'should raise an loading error' do
         expect do
-          loader.load_deputies(deputies)
+          loader.load_deputies!(deputies)
         end.to raise_error(Sync::Common::LoaderError, 'Array of deputies can\'t be empty')
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe Sync::Common::Loader do
       end
 
       it 'should not raise error' do
-        data = loader.load_deputies(deputies)
+        data = loader.load_deputies!(deputies)
 
         expect { data }.not_to raise_error
       end

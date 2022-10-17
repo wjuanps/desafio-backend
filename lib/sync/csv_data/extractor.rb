@@ -4,11 +4,12 @@ module Sync
   module CSVData
     class Extractor
 
-      def extract_data_from_csv(filename)
-        return nil unless File.exist?(filename)
+      def extract_data_from_csv(file)
+        return nil unless File.exist?(file)
+        return nil unless File.extname(file) == '.csv'
 
         csv_data = []
-        CSV.foreach(filename, headers: true, encoding: 'bom|utf-8', col_sep: ';') do |row|
+        CSV.foreach(file, headers: true, encoding: 'bom|utf-8', col_sep: ';') do |row|
           next unless row['sgUF'] == 'PA'
 
           csv_data << row_data(row)

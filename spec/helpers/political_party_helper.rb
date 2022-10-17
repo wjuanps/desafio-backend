@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PoliticalPartyHelper do
-  describe '#month_name_from_month_code' do
+  describe '#political_party_name_from_political_party_code' do
     let(:political_party) { 'PV' }
 
     context 'When political party is invalid' do

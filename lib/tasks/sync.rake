@@ -8,6 +8,9 @@ namespace :sync do
     synchronizer = Sync::CSVData::Synchronizer.new
     csv_file = args[:csv_file].present? ? args[:csv_file] : LOCAL_CSV_FILE
 
-    synchronizer.sync(csv_file)
+    puts ">> #{task}", '>> Carregando documento... Por favor, aguarde!'
+    sync = synchronizer.sync(csv_file)
+
+    puts ">> #{sync[:message]}"
   end
 end

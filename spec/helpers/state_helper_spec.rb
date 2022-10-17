@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe StateHelper do
-  describe '#month_name_from_month_code' do
+  describe '#state_name_from_state_code' do
     let(:state_code) { 'PA' }
 
     context 'When state code is invalid' do
