@@ -13,10 +13,18 @@ The configuration of this project is correct assuming you will run everything us
 
 ### Set up the Application
 
-Run the "docker-compose build" and "docker-compose up -d" steps. This process takes about 5 minutes.
+Run the "develop" script from the project root directory to run the "docker-compose build" and "docker-compose up -d" steps.
+This process takes about 5 minutes.
+
+```
+./develop
+```
+
+You can run the commands directly if you want to
 
 ```
 docker-compose build
+
 docker-compose up -d
 ```
 
