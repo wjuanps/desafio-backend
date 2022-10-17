@@ -11,10 +11,16 @@
 
 The configuration of this project is correct assuming you will run everything using Docker.  If you want to run not within Docker see [Run Service Directly](#run-service-directly).
 
+```
+docker-compose build
+docker-compose up -d
+```
+
 ### Confirm that services are running
 
 ```
 $ docker-compose ps
+
 Name                        Command                           State           Ports         
 --------------------------------------------------------------------------------------------
 desafio-backend_web_1       bundle exec rails s -b 0.0.0.0    Up (healthy)    0.0.0.0:3000->3000/tcp
@@ -111,7 +117,7 @@ docker-compose exec web bundle exec rake sync:csv
 
 If you want to upload the file within the system, make sure you have followed [these instructions](#set-up-the-db) about creating the default user, and that you are logged in 
 
-There is [This file](/lib/tasks/seed/seed_files/csv/ano-2021.csv) that contains the data to be loaded. You can use it if you will
+There is [This file](/lib/tasks/seed/seed_files/csv/ano-2021.csv) that contains the data to be loaded. Feel free to use it if you will
 
 ## Code coverage
 
